@@ -1,10 +1,10 @@
 import streamlit as st
 
 from lab_01 import _______
-from lab_02 import _______
-# from lab_03 import steganography
-# from lab_04 import huffman
-# from lab_05 import LFSR
+# from lab_02 import _______
+# from lab_03 import _______
+# from lab_04 import _______
+# from lab_05 import _______
 
 # st.set_page_config(initial_sidebar_state="collapsed")
 st.sidebar.image('logo.png', width=300)
@@ -28,7 +28,7 @@ def main():
     lab = st.sidebar.radio(
         "Выберите Лабораторную работу:", (
             "1. ______.",
-            "2. ______.",
+            # "2. ______.",
             # "3. ______.",
             # "4. ______.",
             # "5. ______.",
