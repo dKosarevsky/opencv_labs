@@ -1,6 +1,6 @@
 import streamlit as st
 
-from lab_01 import _______
+from lab_01 import gauss_blur
 # from lab_02 import _______
 # from lab_03 import _______
 # from lab_04 import _______
@@ -27,7 +27,7 @@ def main():
     header()
     lab = st.sidebar.radio(
         "Выберите Лабораторную работу:", (
-            "1. ______.",
+            "1. Фильтр Гаусса.",
             # "2. ______.",
             # "3. ______.",
             # "4. ______.",
@@ -38,11 +38,11 @@ def main():
     )
 
     if lab[:1] == "1":
-        _______.main()
+        gauss_blur.main()
 
-    elif lab[:1] == "2":
-        _______.main()
-
+    # elif lab[:1] == "2":
+    #     _______.main()
+    #
     # elif lab[:1] == "3":
     #     _______.main()
     #
