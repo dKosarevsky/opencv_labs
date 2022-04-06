@@ -55,13 +55,7 @@ def gaussian_kernel(size, sigma=1):
 
 def convolution(image, kernel, column, average=False):
     with column:
-        if len(image.shape) == 3:
-            st.write(f"Найдено 3 канала: {image.shape}")
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            st.write(f"Конвертация в серый канал. Размер: {image.shape}")
-        else:
-            st.write(f"Размер изображения: {image.shape}")
-
+        st.write(f"Размер изображения: {image.shape}")
         st.write(f"Размер ядра: {kernel.shape}")
 
         image_row, image_col = image.shape
@@ -100,7 +94,7 @@ def main():
     user_img = uploader(st.file_uploader("Загрузить изображение:", type=FILE_TYPES))
     user_url = validate_url(st.text_input(f"Вставьте ссылку на изображение {FILE_TYPES}: ", URL))
 
-    color_image, gray_image = get_image(user_img, user_url)
+    _, gray_image = get_image(user_img, user_url)
 
     func = st.radio(
         "Выберите Фильтр:", (
