@@ -5,4 +5,4 @@ streamlit==1.8.1  # https://streamlit.io/
 watchdog==2.1.7  # https://github.com/gorakhargosh/watchdog
 
 # opencv
-opencv-python==4.5.5.64  # https://github.com/opencv/opencv-python
+opencv-python-headless==4.5.5.64  # https://github.com/opencv/opencv-python
