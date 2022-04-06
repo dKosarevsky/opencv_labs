@@ -18,21 +18,13 @@ def uploader(file):
     return file
 
 
-def not_valid_url_err():
-    return st.error("Не похоже на ссылку с изображением, повторите ввод.")
-
-
 def validate_url(url):
-    try:
-        result = urlparse(url)
-        if all([result.scheme, result.netloc]):
-            return url
-        else:
-            not_valid_url_err()
-            return False
-    except AttributeError:
-        not_valid_url_err()
-        return False
+    result = urlparse(url)
+    if all([result.scheme, result.netloc]):
+        return url
+    else:
+        st.error("Не похоже на ссылку с изображением, повторите ввод.")
+        st.stop()
 
 
 def get_image(user_img, user_url):
@@ -44,7 +36,7 @@ def get_image(user_img, user_url):
         try:
             img = Image.open(BytesIO(response.content))
         except UnidentifiedImageError:
-            st.write("Что-то пошло не так... Попробуйте другую ссылку или загрузите изображение со своего устройства.")
+            st.error("Что-то пошло не так... Попробуйте другую ссылку или загрузите изображение со своего устройства.")
             st.stop()
 
     arr = np.uint8(img)
