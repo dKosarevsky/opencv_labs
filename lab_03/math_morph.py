@@ -7,7 +7,7 @@ from random import choice
 
 CAPTCHA = [
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgLg-c-AluBHgDZmvJ7jf1fmj99We5Nc2wdw&usqp=CAU",
-    "https://miro.medium.com/max/500/0*jYYGYfXCkUvSynfX.jpg"
+    "https://neumeka.ru/images/uchebnik/internet/help/captcha/1.jpg"
 ]
 SKELETON = [
     "https://img.joomcdn.net/92607ff7228cdc404d6a2a24aea1c7b9c8fde65e_original.jpeg",
