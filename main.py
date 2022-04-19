@@ -8,7 +8,7 @@ from lab_03 import math_morph
 # from lab_06 import _______
 # from lab_07 import _______
 
-st.set_page_config(initial_sidebar_state="collapsed")
+# st.set_page_config(initial_sidebar_state="collapsed")
 st.sidebar.image('logo.png', width=300)
 
 
