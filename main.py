@@ -2,11 +2,11 @@ import streamlit as st
 
 from lab_01 import gauss_blur
 from lab_02 import binary
-# from lab_03 import _______
+from lab_03 import math_morph
 # from lab_04 import _______
 # from lab_05 import _______
 
-# st.set_page_config(initial_sidebar_state="collapsed")
+st.set_page_config(initial_sidebar_state="collapsed")
 st.sidebar.image('logo.png', width=300)
 
 
@@ -29,12 +29,12 @@ def main():
         "Выберите Лабораторную работу:", (
             "1. Фильтр Гаусса.",
             "2. Бинаризация.",
-            # "3. ______.",
+            "3. Математическая морфология.",
             # "4. ______.",
             # "5. ______.",
             # "6. ______.",
         ),
-        index=1
+        index=2
     )
 
     if lab[:1] == "1":
@@ -43,9 +43,9 @@ def main():
     elif lab[:1] == "2":
         binary.main()
 
-    # elif lab[:1] == "3":
-    #     _______.main()
-    #
+    elif lab[:1] == "3":
+        math_morph.main()
+
     # elif lab[:1] == "4":
     #     _______.main()
     #
