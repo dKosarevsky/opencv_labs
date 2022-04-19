@@ -5,6 +5,8 @@ from lab_02 import binary
 from lab_03 import math_morph
 # from lab_04 import _______
 # from lab_05 import _______
+# from lab_06 import _______
+# from lab_07 import _______
 
 st.set_page_config(initial_sidebar_state="collapsed")
 st.sidebar.image('logo.png', width=300)
@@ -33,6 +35,7 @@ def main():
             # "4. ______.",
             # "5. ______.",
             # "6. ______.",
+            # "7. ______.",
         ),
         index=2
     )
@@ -53,6 +56,9 @@ def main():
     #     _______.main()
     #
     # elif lab[:1] == "6":
+    #     _______.main()
+    #
+    # elif lab[:1] == "7":
     #     _______.main()
 
 
