@@ -44,9 +44,11 @@ def get_image(user_img, user_url):
 
     c1, c2 = st.columns(2)
     with c1:
+        st.write("Исходное изображение:")
         st.image(img, width=300)
 
     with c2:
+        st.write("Оттенки серого:")
         st.image(gray, width=300)
 
     return img, gray

@@ -7,10 +7,13 @@ from random import choice
 
 CAPTCHA = [
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgLg-c-AluBHgDZmvJ7jf1fmj99We5Nc2wdw&usqp=CAU",
+    "https://blog.cloudflare.com/content/images/2020/04/image3-4.png",
     "https://neumeka.ru/images/uchebnik/internet/help/captcha/1.jpg"
 ]
 SKELETON = [
     "https://img.joomcdn.net/92607ff7228cdc404d6a2a24aea1c7b9c8fde65e_original.jpeg",
+    "https://as2.ftcdn.net/v2/jpg/01/95/03/57/1000_F_195035719_Yd7LNacdbH7BnCfrXIJRqev6GZ5K1ZBQ.jpg"
+    "https://media.istockphoto.com/photos/white-horse-runs-gallop-isolated-on-the-black-picture-id167634727?k=20&m=167634727&s=612x612&w=0&h=dp1g7fAJr2d3n8alba17BQDuIQN9uPKFDg6KMEQU6fY="
     "https://habrastorage.org/r/w1560/getpro/habr/upload_files/7b9/0c6/00f/7b90c600f701ba16073176b9fbdea1d4.png"
 ]
 
@@ -91,15 +94,15 @@ def description():
         6. Преобразование "попадание-пропуск" (Hit-or-Miss transformation)
         7. Морфологический скелет бинарного изображения
     
-        Найти изображение с зашумлёнными простыми формами, например каптча.
-        Биноризовать изображение, например методом Оцу или Бредли.
+        Найти изображение с зашумлёнными простыми формами, например капча.
+        Биноризовать изображение, например методом Оцу или Брэдли.
         
         Реализовать все изученные морфологические операции, кроме Hit-or-Miss.
         
         В OpenCV есть Erode, Dilate, getStructuringElement.
         Эрозию и Дилатацию можно взять готовые. Но их нужно показать.
         
-        Морфологический скелет лучше делать не на каптче, а например на какой-либо надписи толстым шрифтом (огромными буквами) или например белая лошадь.
+        Морфологический скелет лучше делать не на капче, а например на какой-либо надписи толстым шрифтом (огромными буквами) или например белая лошадь.
     """
 
     st.markdown("### Лабораторная работа №3")
@@ -133,46 +136,40 @@ def main():
 
     c1, c2 = st.columns(2)
 
-    if method == "1":
+    with c1:
         bin_img = binary(gray_image)
-        dilate_img = dilate(gray_image)
+        st.write("Бинаризация методом Оцу:")
+        st.image(bin_img, width=300)
 
-        with c2:
+    with c2:
+        if method == "1":
+            dilate_img = dilate(gray_image)
+            st.write("Дилатация:")
             st.image(dilate_img, width=300)
 
-    if method == "2":
-        bin_img = binary(gray_image)
-        erode_img = erode(bin_img)
-
-        with c2:
+        if method == "2":
+            erode_img = erode(bin_img)
+            st.write("Эрозия:")
             st.image(erode_img, width=300)
 
-    if method == "3":
-        bin_img = binary(gray_image)
-        closing_img = closing(bin_img)
-
-        with c2:
+        if method == "3":
+            closing_img = closing(bin_img)
+            st.write("Замыкание:")
             st.image(closing_img, width=300)
 
-    if method == "4":
-        bin_img = binary(gray_image)
-        opening_img = opening(bin_img)
-
-        with c2:
+        if method == "4":
+            opening_img = opening(bin_img)
+            st.write("Размыкание:")
             st.image(opening_img, width=300)
 
-    if method == "5":
-        bin_img = binary(gray_image)
-        dilate_c_img = condition_dilate(bin_img)
-
-        with c2:
+        if method == "5":
+            dilate_c_img = condition_dilate(bin_img)
+            st.write("Условная дилатация:")
             st.image(dilate_c_img, width=300)
 
-    if method == "6":
-        bin_img = binary(gray_image)
-        skeletoning_img = skeletoning(bin_img)
-
-        with c2:
+        if method == "6":
+            skeletoning_img = skeletoning(bin_img)
+            st.write("Морфологический скелет:")
             st.image(skeletoning_img, width=300)
 
 
