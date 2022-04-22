@@ -6,43 +6,37 @@ from utils.utils import uploader, validate_url, FILE_TYPES, get_image
 from random import choice
 
 CAPTCHA = [
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgLg-c-AluBHgDZmvJ7jf1fmj99We5Nc2wdw&usqp=CAU",
-    "https://blog.cloudflare.com/content/images/2020/04/image3-4.png",
-    "https://neumeka.ru/images/uchebnik/internet/help/captcha/1.jpg"
+    # "https://i.ibb.co/cLnchh3/image3-4.png",
+    # "https://i.ibb.co/KyCzGpN/1-1.jpg",
+    "https://i.ibb.co/pQ6KPT2/0-wiwh8t-UKBZBZSHiy.jpg"
 ]
 SKELETON = [
-    "https://img.joomcdn.net/92607ff7228cdc404d6a2a24aea1c7b9c8fde65e_original.jpeg",
-    "https://as2.ftcdn.net/v2/jpg/01/95/03/57/1000_F_195035719_Yd7LNacdbH7BnCfrXIJRqev6GZ5K1ZBQ.jpg"
-    "https://media.istockphoto.com/photos/white-horse-runs-gallop-isolated-on-the-black-picture-id167634727?k=20&m=167634727&s=612x612&w=0&h=dp1g7fAJr2d3n8alba17BQDuIQN9uPKFDg6KMEQU6fY="
-    "https://habrastorage.org/r/w1560/getpro/habr/upload_files/7b9/0c6/00f/7b90c600f701ba16073176b9fbdea1d4.png"
+    "https://i.ibb.co/ZccJRvp/92607ff7228cdc404d6a2a24aea1c7b9c8fde65e-original.jpg",
+    "https://i.ibb.co/n6pv8qF/1000-F-195035719-Yd7-LNacdb-H7-Bn-Cfr-XIJRqev6-GZ5-K1-ZBQ.jpg"
+    "https://i.ibb.co/8YqpjVD/istockphoto-167634727-612x612.jpg"
 ]
 
 
 def binary(img):
-    _, bin_img = cv2.threshold(src=img, thresh=15, maxval=255, type=cv2.THRESH_OTSU)
-    return bin_img
+    return cv2.threshold(src=img, thresh=0, maxval=255, type=cv2.THRESH_OTSU)[1]
 
 
 def dilate(img, k=5, k_size=(3, 3)):
     kernel = cv2.getStructuringElement(cv2.MORPH_DILATE, ksize=k_size)
-    for x in range(k):
-        img = cv2.dilate(img, kernel)
-    return img
+    return cv2.dilate(~img, kernel, iterations=k)
 
 
 def erode(img, k=5, k_size=(3, 3)):
     kernel = cv2.getStructuringElement(cv2.MORPH_ERODE, ksize=k_size)
-    for x in range(k):
-        img = cv2.erode(img, kernel)
-    return img
+    return cv2.erode(~img, kernel, iterations=k)
 
 
-def closing(img):
-    return dilate(erode(img))
+def closing(img, k):
+    return dilate(erode(img, k), k)
 
 
-def opening(img):
-    return erode(dilate(img))
+def opening(img, k):
+    return erode(dilate(img, k), k)
 
 
 def condition_dilate(img, dilation_level=3):
@@ -82,7 +76,6 @@ def skeletoning(img, k_size=(3, 3)):
 
 
 def description():
-
     task = """
     Математическая морфология
     
@@ -128,14 +121,14 @@ def main():
     )[:1]
 
     user_img = uploader(st.file_uploader("Загрузить изображение:", type=FILE_TYPES))
+
     user_url = validate_url(
         st.text_input(f"Ссылка на изображение {FILE_TYPES}: ", choice(SKELETON) if method == "6" else choice(CAPTCHA))
     )
-
     _, gray_image = get_image(user_img, user_url)
 
+    k = st.number_input("Количество итераций:", min_value=1, max_value=99, value=2, step=1)
     c1, c2 = st.columns(2)
-
     with c1:
         bin_img = binary(gray_image)
         st.write("Бинаризация методом Оцу:")
@@ -143,22 +136,22 @@ def main():
 
     with c2:
         if method == "1":
-            dilate_img = dilate(gray_image)
+            dilate_img = dilate(bin_img, k)
             st.write("Дилатация:")
             st.image(dilate_img, width=300)
 
         if method == "2":
-            erode_img = erode(bin_img)
+            erode_img = erode(bin_img, k)
             st.write("Эрозия:")
             st.image(erode_img, width=300)
 
         if method == "3":
-            closing_img = closing(bin_img)
+            closing_img = closing(bin_img, k)
             st.write("Замыкание:")
             st.image(closing_img, width=300)
 
         if method == "4":
-            opening_img = opening(bin_img)
+            opening_img = opening(bin_img, k)
             st.write("Размыкание:")
             st.image(opening_img, width=300)
 
@@ -171,6 +164,7 @@ def main():
             skeletoning_img = skeletoning(bin_img)
             st.write("Морфологический скелет:")
             st.image(skeletoning_img, width=300)
+            st.button("Другое изображение")
 
 
 if __name__ == "__main__":
