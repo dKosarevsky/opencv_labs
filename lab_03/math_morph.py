@@ -39,7 +39,7 @@ def opening(img, k):
     return erode(dilate(~img, k), k)
 
 
-def condition_dilate(img, dilation_level=3):
+def condition_dilate(img, dilation_level):
     dilation_level = 3 if dilation_level < 3 else dilation_level
 
     structuring_kernel = np.full(shape=(dilation_level, dilation_level), fill_value=255)
@@ -127,8 +127,8 @@ def main():
     )
     _, gray_image = get_image(user_img, user_url)
 
-    k = st.number_input("Количество итераций:", min_value=1, max_value=99, value=2, step=1)
     c1, c2 = st.columns(2)
+    k = c1.number_input("Количество итераций:", min_value=1, max_value=99, value=2, step=1)
     with c1:
         bin_img = binary(gray_image)
         st.write("Бинаризация методом Оцу:")
@@ -156,7 +156,8 @@ def main():
             st.image(opening_img, width=300)
 
         if method == "5":
-            dilate_c_img = condition_dilate(bin_img)
+            lvl = c2.number_input("Уровень дилатации:", min_value=1, max_value=99, value=6, step=1)
+            dilate_c_img = condition_dilate(bin_img, lvl)
             st.write("Условная дилатация:")
             st.image(dilate_c_img, width=300)
 
