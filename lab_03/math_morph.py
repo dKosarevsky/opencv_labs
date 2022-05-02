@@ -32,11 +32,11 @@ def erode(img, k=5, k_size=(3, 3)):
 
 
 def closing(img, k):
-    return dilate(erode(img, k), k)
+    return dilate(erode(~img, k), k)
 
 
 def opening(img, k):
-    return erode(dilate(img, k), k)
+    return erode(dilate(~img, k), k)
 
 
 def condition_dilate(img, dilation_level=3):
