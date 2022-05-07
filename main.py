@@ -3,7 +3,7 @@ import streamlit as st
 from lab_01 import gauss_blur
 from lab_02 import binary
 from lab_03 import math_morph
-# from lab_04 import _______
+from lab_04 import edges
 # from lab_05 import _______
 # from lab_06 import _______
 # from lab_07 import _______
@@ -32,33 +32,32 @@ def main():
             "1. Фильтр Гаусса.",
             "2. Бинаризация.",
             "3. Мат. морфология.",
-            # "4. ______.",
+            "4. Границы изображения.",
             # "5. ______.",
             # "6. ______.",
             # "7. ______.",
-        ),
-        index=2
-    )
+        ), index=3
+    )[:1]
 
-    if lab[:1] == "1":
+    if lab == "1":
         gauss_blur.main()
 
-    elif lab[:1] == "2":
+    elif lab == "2":
         binary.main()
 
-    elif lab[:1] == "3":
+    elif lab == "3":
         math_morph.main()
 
-    # elif lab[:1] == "4":
+    elif lab == "4":
+        edges.main()
+
+    # elif lab == "5":
     #     _______.main()
     #
-    # elif lab[:1] == "5":
+    # elif lab == "6":
     #     _______.main()
     #
-    # elif lab[:1] == "6":
-    #     _______.main()
-    #
-    # elif lab[:1] == "7":
+    # elif lab == "7":
     #     _______.main()
 
 
