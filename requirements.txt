@@ -1,5 +1,5 @@
 # Streamlit
-streamlit==1.8.1  # https://streamlit.io/
+streamlit==1.9.0  # https://streamlit.io/
 
 # Watchdog
 watchdog==2.1.7  # https://github.com/gorakhargosh/watchdog

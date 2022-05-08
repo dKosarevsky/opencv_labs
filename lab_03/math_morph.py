@@ -39,25 +39,18 @@ def opening(img, k):
     return erode(dilate(~img, k), k)
 
 
-def condition_dilate(img, dilation_level):
-    dilation_level = 3 if dilation_level < 3 else dilation_level
+def condition_dilate(img):
+    img = ~img
+    elem = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
-    structuring_kernel = np.full(shape=(dilation_level, dilation_level), fill_value=255)
-
-    orig_shape = img.shape
-    pad_width = dilation_level - 2
-
-    image_pad = np.pad(array=img, pad_width=pad_width, mode='constant')
-    pimg_shape = image_pad.shape
-    h_reduce, w_reduce = (pimg_shape[0] - orig_shape[0]), (pimg_shape[1] - orig_shape[1])
-
-    flat_matrix = np.array([
-        image_pad[i:(i + dilation_level), j:(j + dilation_level)]
-        for i in range(pimg_shape[0] - h_reduce) for j in range(pimg_shape[1] - w_reduce)
-    ])
-
-    image_dilate = np.array([255 if (i == structuring_kernel).any() else 0 for i in flat_matrix])
-    return image_dilate.reshape(orig_shape)
+    minimum = np.minimum(img, cv2.erode(img, elem, iterations=3))
+    while True:
+        previous = minimum
+        minimum = cv2.dilate(minimum, elem)
+        result = np.minimum(img, minimum)
+        if np.array_equal(result, previous):
+            return result
+        minimum = result
 
 
 def skeletoning(img, k_size=(3, 3)):
@@ -105,6 +98,10 @@ def description():
         st.write(task)
 
 
+def show_iters():
+    return st.number_input("Количество итераций:", min_value=1, max_value=99, value=2, step=1)
+
+
 def main():
     description()
 
@@ -128,7 +125,6 @@ def main():
     _, gray_image = get_image(user_img, user_url)
 
     c1, c2 = st.columns(2)
-    k = c1.number_input("Количество итераций:", min_value=1, max_value=99, value=2, step=1)
     with c1:
         bin_img = binary(gray_image)
         st.write("Бинаризация методом Оцу:")
@@ -136,30 +132,33 @@ def main():
 
     with c2:
         if method == "1":
+            k = show_iters()
             dilate_img = dilate(bin_img, k)
             st.write("Дилатация:")
             st.image(dilate_img, width=300)
 
         if method == "2":
+            k = show_iters()
             erode_img = erode(bin_img, k)
             st.write("Эрозия:")
             st.image(erode_img, width=300)
 
         if method == "3":
+            k = show_iters()
             closing_img = closing(bin_img, k)
             st.write("Замыкание:")
             st.image(closing_img, width=300)
 
         if method == "4":
+            k = show_iters()
             opening_img = opening(bin_img, k)
             st.write("Размыкание:")
             st.image(opening_img, width=300)
 
         if method == "5":
-            lvl = c2.number_input("Уровень дилатации:", min_value=1, max_value=99, value=6, step=1)
-            dilate_c_img = condition_dilate(bin_img, lvl)
+            dilate_c_img = condition_dilate(bin_img)
             st.write("Условная дилатация:")
-            st.image(dilate_c_img, width=300)
+            st.image(dilate_c_img, width=300, clamp=True)
 
         if method == "6":
             skeletoning_img = skeletoning(bin_img)
