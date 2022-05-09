@@ -52,3 +52,7 @@ def get_image(user_img, user_url):
         st.image(gray, width=300)
 
     return img, gray
+
+
+def binary(img):
+    return cv2.threshold(src=img, thresh=0, maxval=255, type=cv2.THRESH_OTSU)[1]

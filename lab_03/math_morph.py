@@ -2,7 +2,7 @@ import streamlit as st
 import numpy as np
 import cv2
 
-from utils.utils import uploader, validate_url, FILE_TYPES, get_image
+from utils.utils import uploader, validate_url, FILE_TYPES, get_image, binary
 from random import choice
 
 CAPTCHA = [
@@ -15,10 +15,6 @@ SKELETON = [
     "https://i.ibb.co/n6pv8qF/1000-F-195035719-Yd7-LNacdb-H7-Bn-Cfr-XIJRqev6-GZ5-K1-ZBQ.jpg"
     "https://i.ibb.co/8YqpjVD/istockphoto-167634727-612x612.jpg"
 ]
-
-
-def binary(img):
-    return cv2.threshold(src=img, thresh=0, maxval=255, type=cv2.THRESH_OTSU)[1]
 
 
 def dilate(img, k=5, k_size=(3, 3)):

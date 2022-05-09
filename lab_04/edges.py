@@ -2,7 +2,7 @@ import streamlit as st
 import numpy as np
 import cv2
 
-from utils.utils import uploader, get_image, FILE_TYPES, validate_url
+from utils.utils import uploader, get_image, FILE_TYPES, validate_url, binary
 
 URL = "https://i.ibb.co/Yj7dj1w/pexels-photo-9035242.jpg"
 
@@ -96,7 +96,7 @@ def prewitt(img):
                           [0, 0, 0],
                           [-1, -1, -1]])
 
-    return convolution(img, prewitt_x, prewitt_y)
+    return binary(convolution(img, prewitt_x, prewitt_y))
 
 
 def sobel(img):
@@ -107,7 +107,7 @@ def sobel(img):
                         [0.0, 0.0, 0.0],
                         [-1.0, -2.0, -1.0]])
 
-    return convolution(img, sobel_x, sobel_y)
+    return binary(convolution(img, sobel_x, sobel_y))
 
 
 def scharr(img):
@@ -118,54 +118,70 @@ def scharr(img):
                          [0, 0, 0],
                          [3, 10, 3]])
 
-    return convolution(img, scharr_x, scharr_y)
+    return binary(convolution(img, scharr_x, scharr_y))
 
 
-class Laplacian:
-    def __init__(self, kernel_type=4, center=None, c=None):
-        kernel4 = np.array([[0, 1, 0],
-                            [1, -4, 1],
-                            [0, 1, 0]])
-        kernel8 = np.array([[1, 1, 1],
-                            [1, -8, 1],
-                            [1, 1, 1]])
-        self.kernel = kernel4 if kernel_type == 4 else kernel8
-        c.write(self.kernel)
-        if center is None:
-            center = ((self.kernel.shape[0] - 1) // 2, (self.kernel.shape[1] - 1) // 2)
-        self.center = center
+def zeros_crossing(img, thresh):
+    d_size = (img.shape[1], img.shape[0])
 
-    def __repr__(self):
-        return f"kernel: {self.kernel} | center: {self.center}"
+    mask = np.array([[1, 0, -1],
+                     [0, 1, 0]], dtype=np.float32)
+    shift_left = cv2.warpAffine(img, mask, d_size)
+    mask = np.array([[1, 0, 1],
+                     [0, 1, 0]], dtype=np.float32)
+    shift_right = cv2.warpAffine(img, mask, d_size)
 
-    def kernel_width(self):
-        return self.kernel.shape[0]
+    mask = np.array([[1, 0, 0],
+                     [0, 1, -1]], dtype=np.float32)
+    shift_up = cv2.warpAffine(img, mask, d_size)
+    mask = np.array([[1, 0, 0],
+                     [0, 1, 1]], dtype=np.float32)
+    shift_down = cv2.warpAffine(img, mask, d_size)
 
-    def kernel_height(self):
-        return self.kernel.shape[1]
+    mask = np.array([[1, 0, 1],
+                     [0, 1, 1]], dtype=np.float32)
+    shift_right_down = cv2.warpAffine(img, mask, d_size)
+    mask = np.array([[1, 0, -1],
+                     [0, 1, -1]], dtype=np.float32)
+    shift_left_up = cv2.warpAffine(img, mask, d_size)
 
-    def center_to_right(self):
-        return self.kernel_width() - 1 - self.center[0]
+    mask = np.array([[1, 0, 1],
+                     [0, 1, -1]], dtype=np.float32)
+    shift_right_up = cv2.warpAffine(img, mask, d_size)
+    mask = np.array([[1, 0, -1],
+                     [0, 1, 1]], dtype=np.float32)
+    shift_left_down = cv2.warpAffine(img, mask, d_size)
 
-    def center_to_bottom(self):
-        return self.kernel_height() - 1 - self.center[1]
+    shift_left_right_sign = shift_left * shift_right
+    shift_up_down_sign = shift_up * shift_down
+    shift_rd_lu_sign = shift_right_down * shift_left_up
+    shift_ru_ld_sign = shift_right_up * shift_left_down
 
-    def center_to_bottom_right(self):
-        return self.center_to_right(), self.center_to_bottom()
+    shift_left_right_norm = np.abs(shift_left - shift_right)
+    shift_up_down_norm = np.abs(shift_up - shift_down)
+    shift_rd_lu_norm = np.abs(shift_right_down - shift_left_up)
+    shift_ru_ld_norm = np.abs(shift_right_up - shift_left_down)
 
-    def apply_operator(self, gray):
-        width, height = gray.shape
+    zero_crossing = (
+        ((shift_left_right_sign < 0) & (shift_left_right_norm > thresh)).astype('uint8') +
+        ((shift_up_down_sign < 0) & (shift_up_down_norm > thresh)).astype('uint8') +
+        ((shift_rd_lu_sign < 0) & (shift_rd_lu_norm > thresh)).astype('uint8') +
+        ((shift_ru_ld_sign < 0) & (shift_ru_ld_norm > thresh)).astype('uint8')
+    )
 
-        result = np.zeros_like(gray, dtype='int')
-        for i in range(self.center[0], width - self.center_to_right()):
-            for j in range(self.center[1], height - self.center_to_bottom()):
-                result[i, j] = np.sum(
-                    self.kernel * gray[
-                                  i - self.center[0]:i + self.center_to_right() + 1,
-                                  j - self.center[1]:j + self.center_to_bottom() + 1
-                                  ]
-                )
-        return result
+    result = np.zeros(shape=img.shape, dtype=np.uint8)
+    result[zero_crossing >= 2] = 255
+
+    return result
+
+
+def laplacian(img, kernel_size, sigma=0, thresh=None, alpha=0.01):
+    blur_img = cv2.GaussianBlur(img.astype('float32'), (kernel_size, kernel_size), sigmaX=sigma)
+    laplacian_img = cv2.Laplacian(blur_img, cv2.CV_32F)
+    if thresh is None:
+        thresh = abs(laplacian_img).max() * alpha
+    edge_image = zeros_crossing(laplacian_img, thresh)
+    return edge_image
 
 
 def main():
@@ -208,7 +224,7 @@ def main():
 
     if method == "3":
         res = prewitt(gray_image)
-        st.image(res, clamp=True, width=660)
+        st.image(res, width=660)
 
     if method == "4":
         res = sobel(gray_image)
@@ -219,10 +235,9 @@ def main():
         st.image(res, width=660)
 
     if method == "6":
-        kernel_type = c2.selectbox("Выберите фильтр", options=(4, 8))
-        res = Laplacian(kernel_type=kernel_type, c=c1)
-        res = np.abs(res.apply_operator(gray_image))
-        st.image(res, clamp=True, width=660)
+        kernel_size = c2.number_input("Размер ядра:", min_value=1, max_value=199, value=25, step=2)
+        edge = laplacian(gray_image, kernel_size=kernel_size)
+        st.image(edge, width=660)
 
 
 if __name__ == "__main__":
