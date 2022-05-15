@@ -235,8 +235,9 @@ def main():
         st.image(res, width=660)
 
     if method == "6":
+        alpha = c1.number_input("α:", min_value=0.01, max_value=0.1, value=0.04)
         kernel_size = c2.number_input("Размер ядра:", min_value=1, max_value=199, value=25, step=2)
-        edge = laplacian(gray_image, kernel_size=kernel_size)
+        edge = laplacian(gray_image, kernel_size=kernel_size, alpha=alpha)
         st.image(edge, width=660)
 
 
