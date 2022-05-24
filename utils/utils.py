@@ -56,3 +56,12 @@ def get_image(user_img, user_url):
 
 def binary(img):
     return cv2.threshold(src=img, thresh=0, maxval=255, type=cv2.THRESH_OTSU)[1]
+
+
+def loader(url, txt):
+    user_img = uploader(st.file_uploader(f"Загрузить {txt}:", type=FILE_TYPES))
+
+    user_url = validate_url(
+        st.text_input(f"Ссылка на изображение {FILE_TYPES}: ", url)
+    )
+    return get_image(user_img, user_url)

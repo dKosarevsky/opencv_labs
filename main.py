@@ -4,8 +4,8 @@ from lab_01 import gauss_blur
 from lab_02 import binary
 from lab_03 import math_morph
 from lab_04 import edges
-# from lab_05 import _______
-# from lab_06 import _______
+from lab_05 import contour_analysis
+from lab_06 import key_points
 # from lab_07 import _______
 
 # st.set_page_config(initial_sidebar_state="collapsed")
@@ -33,10 +33,10 @@ def main():
             "2. Бинаризация.",
             "3. Мат. морфология.",
             "4. Границы изображения.",
-            # "5. ______.",
-            # "6. ______.",
+            "5. Контурный анализ.",
+            "6. Характерные точки.",
             # "7. ______.",
-        ), index=3
+        ), index=5
     )[:1]
 
     if lab == "1":
@@ -51,12 +51,12 @@ def main():
     elif lab == "4":
         edges.main()
 
-    # elif lab == "5":
-    #     _______.main()
-    #
-    # elif lab == "6":
-    #     _______.main()
-    #
+    elif lab == "5":
+        contour_analysis.main()
+
+    elif lab == "6":
+        key_points.main()
+
     # elif lab == "7":
     #     _______.main()
 
