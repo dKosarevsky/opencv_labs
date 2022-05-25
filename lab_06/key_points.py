@@ -28,7 +28,7 @@ def description():
         2. Детектор углов Харриса-Стефана (из OpenCV)
         3. Детектор FAST (Features From Accelerated Segment Test) (из OpenCV)
         
-        Сравнить результаты сразу по всем трём, вывести на одном экране все три
+        Сравнить результаты по всем трём
     """
 
     st.markdown("### Лабораторная работа №6")
@@ -39,8 +39,8 @@ def description():
     st.markdown("---")
 
 
-def moravec_detector(gray, color, window_size=5, threshold=5000):
-    r = window_size // 2
+def moravec_detector(gray, color, block_size, thresh):
+    r = block_size // 2
     rows = gray.shape[0]
     cols = gray.shape[1]
     corners = []
@@ -61,7 +61,7 @@ def moravec_detector(gray, color, window_size=5, threshold=5000):
                 w_v4 += (gray[y + k, x - k] - gray[y + k + 1, x - k - 1]) * (gray[y + k, x - k] - gray[y + k + 1, x - k - 1])
             arr = np.array([w_v1, w_v2, w_v2, w_v2])
             val = min(arr)
-            if val > threshold:
+            if val > thresh:
                 corners.append((x, y))
 
     for corner in corners:
@@ -73,7 +73,7 @@ def moravec_detector(gray, color, window_size=5, threshold=5000):
     return color
 
 
-def harris_detector(gray, color, block_size=2, aperture_size=5, k=0.07):
+def harris_detector(gray, color, block_size, aperture_size, k):
     gray = np.float32(gray)
 
     dest = cv2.cornerHarris(gray, block_size, aperture_size, k)
@@ -86,14 +86,14 @@ def harris_detector(gray, color, block_size=2, aperture_size=5, k=0.07):
             if int(dest[i, j]) > thresh:
                 cv2.circle(color, (j, i), 3, COLOR)
 
-    st.write("Харриса-Стефана")
+    st.write("Детектор Харриса-Стефана.")
     st.write(f"Кол-во углов: {num_corners}")
 
     return color
 
 
-def fast_feature_detector(gray, color):
-    fast = cv2.FastFeatureDetector_create()
+def fast_detector(gray, color, thresh, non_max_suppression):
+    fast = cv2.FastFeatureDetector_create(thresh, non_max_suppression)
 
     corners = fast.detect(gray, None)
     img = cv2.drawKeypoints(color, corners, None, color=COLOR)
@@ -107,17 +107,44 @@ def fast_feature_detector(gray, color):
 def main():
     description()
 
+    detector = st.radio(
+        "Выберите Детектор:", (
+            "1. Моравеца",
+            "2. Харриса-Стефана",
+            "3. FAST",
+        ),
+        index=2
+    )[:1]
+    st.markdown("---")
+
     color_img, gray_image = loader(URL, txt="изображение")
     color_img = np.asarray(color_img)
+    st.markdown("---")
 
-    moravec_img = moravec_detector(gray_image.copy(), color_img.copy(), 5, 500)
-    st.image(moravec_img)
+    if detector == "1":
+        c3, c4 = st.columns(2)
+        moravec_block = c3.number_input("Размер блока:", min_value=1, max_value=99, value=5, step=1)
+        moravec_thresh = c4.number_input("Порог:", min_value=1, max_value=9999, value=500, step=1)
+        moravec_img = moravec_detector(gray_image.copy(), color_img.copy(), moravec_block, moravec_thresh)
+        st.image(moravec_img)
+        st.markdown("---")
 
-    harris_img = harris_detector(gray_image.copy(), color_img.copy())
-    st.image(harris_img)
+    if detector == "2":
+        c5, c6, c7 = st.columns(3)
+        harris_block = c5.number_input("Размер блока:", min_value=1, max_value=99, value=2, step=1)
+        harris_a = c6.number_input("Размер апертуры:", min_value=1, max_value=9999, value=5, step=1)
+        harris_k = c7.number_input("k:", min_value=.01, max_value=1., value=.07, step=.01)
+        harris_img = harris_detector(gray_image.copy(), color_img.copy(), harris_block, harris_a, harris_k)
+        st.image(harris_img)
+        st.markdown("---")
 
-    res = fast_feature_detector(gray_image.copy(), color_img.copy())
-    st.image(res)
+    if detector == "3":
+        c8, c9 = st.columns(2)
+        fast_thresh = c8.number_input("Порог:", min_value=1, max_value=9999, value=10, step=1)
+        non_max_suppression = c9.checkbox("Не-максимальное подавление", value=True)
+        res = fast_detector(gray_image.copy(), color_img.copy(), fast_thresh, non_max_suppression)
+        st.image(res)
+        st.markdown("---")
 
 
 if __name__ == "__main__":
