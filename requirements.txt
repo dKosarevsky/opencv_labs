@@ -1,15 +1,15 @@
 # Streamlit
-streamlit==1.9.0  # https://streamlit.io/
+streamlit==1.9.2  # https://streamlit.io/
 
 # Watchdog
-watchdog==2.1.7  # https://github.com/gorakhargosh/watchdog
+watchdog==2.1.8  # https://github.com/gorakhargosh/watchdog
 
 # opencv
 opencv-python-headless==4.5.5.64  # https://github.com/opencv/opencv-python
 
 # plots
-plotly==5.7.0  # https://plotly.com/python/
-matplotlib==3.5.1  # https://matplotlib.org/
+plotly==5.8.0  # https://plotly.com/python/
+matplotlib==3.5.2  # https://matplotlib.org/
 
 # math
-scipy==1.8.0  # https://scipy.github.io/devdocs/index.html
+scipy==1.8.1  # https://scipy.github.io/devdocs/index.html

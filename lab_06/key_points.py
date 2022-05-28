@@ -52,13 +52,10 @@ def moravec_detector(gray, color, block_size, thresh):
             w_v3 = 0
             w_v4 = 0
             for k in range(-r, r):
-                w_v1 += (gray[y, x + k] - gray[y, x + k + 1]) * (gray[y, x + k] - gray[y, x + k + 1])
-            for k in range(-r, r):
-                w_v2 += (gray[y + k, x] - gray[y + k + 1, x]) * (gray[y + k, x] - gray[y + k + 1, x])
-            for k in range(-r, r):
-                w_v3 += (gray[y + k, x + k] - gray[y + k + 1, x + k + 1]) * (gray[y + k, x + k] - gray[y + k + 1, x + k + 1])
-            for k in range(-r, r):
-                w_v4 += (gray[y + k, x - k] - gray[y + k + 1, x - k - 1]) * (gray[y + k, x - k] - gray[y + k + 1, x - k - 1])
+                w_v1 += np.square(gray[y, x + k] - gray[y, x + k + 1])
+                w_v2 += np.square(gray[y + k, x] - gray[y + k + 1, x])
+                w_v3 += np.square(gray[y + k, x + k] - gray[y + k + 1, x + k + 1])
+                w_v4 += np.square(gray[y + k, x - k] - gray[y + k + 1, x - k - 1])
             arr = np.array([w_v1, w_v2, w_v2, w_v2])
             val = min(arr)
             if val > thresh:
