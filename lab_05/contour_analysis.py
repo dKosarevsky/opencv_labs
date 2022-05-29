@@ -5,7 +5,8 @@ import numpy as np
 from utils.utils import loader
 
 PATTERN_URL = "https://img.favpng.com/18/12/25/triangle-blue-shape-png-favpng-GiyVGMhuhVfrT688Zw5x4DGXH.jpg"
-URL = "https://mpng.subpng.com/20190607/clo/kisspng-triangle-symmetry-pattern-tessellation-filetriangular-orthobianticupola-net-png-wikipe-5cfa077caa4479.7233607715598897886974.jpg"
+URL = "https://images.pexels.com/photos/3613019/pexels-photo-3613019.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+URL = "https://images.pexels.com/photos/1340382/pexels-photo-1340382.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
 COLOR = (0, 255, 0)
 
 
@@ -47,20 +48,15 @@ def get_contours(gray, color):
     if c2.checkbox("Определить границы", value=True):
         gray = cv2.Canny(gray, 50, 150)
 
-    # apply binary thresholding
     ret, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
     c1.image(thresh)
 
-    # detect the contours on the binary image using cv2.CHAIN_APPROX_SIMPLE
-    contours, hierarchy = cv2.findContours(image=thresh, mode=cv2.RETR_TREE, method=cv2.CHAIN_APPROX_SIMPLE)
-
-    # st.write(contours)
+    contours, _ = cv2.findContours(image=thresh, mode=cv2.RETR_TREE, method=cv2.CHAIN_APPROX_SIMPLE)
 
     image_copy = np.uint8(color).copy()
     cv2.drawContours(
-        image=image_copy, contours=contours, contourIdx=-1, color=(0, 255, 0), thickness=2, lineType=cv2.LINE_AA)
+        image=image_copy, contours=contours, contourIdx=-1, color=COLOR, thickness=2, lineType=cv2.LINE_AA)
 
-    # see the results
     c2.image(image_copy)
 
 
@@ -89,11 +85,11 @@ def main():
     # get_contours(gray_image, color_img)
     st.markdown("---")
 
-    # Template matching using edges instead of the original image can greatly improve the accuracy of template matching.
     found = []
-    (tH, tW) = gray_pattern.shape[:2]
+    t_h, t_w = gray_pattern.shape[:2]
     template_edged = cv2.Canny(gray_pattern, 50, 200)
 
+    st.write("template_edged:")
     st.image(template_edged)
 
     # Traverse the image size
@@ -103,25 +99,25 @@ def main():
 
         r = gray_image.shape[1] / float(resized.shape[1])
 
-        if resized.shape[0] < tH or resized.shape[1] < tW:
+        if resized.shape[0] < t_h or resized.shape[1] < t_w:
             break
         edged = cv2.Canny(resized, 50, 200)
         result = cv2.matchTemplate(edged, template_edged, cv2.TM_CCOEFF)
-        (_, maxVal, _, maxLoc) = cv2.minMaxLoc(result)
+        _, max_val, _, max_loc = cv2.minMaxLoc(result)
 
         if not found:
-            found.append((maxVal, maxLoc, r))
+            found.append((max_val, max_loc, r))
 
-        if maxVal > found[i][0]:
-            found.append((maxVal, maxLoc, r))
+        if max_val > found[i][0]:
+            found.append((max_val, max_loc, r))
             i += 1
 
+    color_img = np.asarray(color_img)
     for f in found:
-        (_, maxLoc, r) = f
-        (startX, startY) = (int(maxLoc[0] * r), int(maxLoc[1] * r))
-        (endX, endY) = (int((maxLoc[0] + tW) * r), int((maxLoc[1] + tH) * r))
-        color_img = np.asarray(color_img)
-        cv2.rectangle(color_img, (startX, startY), (endX, endY), COLOR, 2)
+        _, max_loc, r = f
+        start_x, start_y = int(max_loc[0] * r), int(max_loc[1] * r)
+        end_x, end_y = int((max_loc[0] + t_w) * r), int((max_loc[1] + t_h) * r)
+        cv2.rectangle(color_img, (start_x, start_y), (end_x, end_y), COLOR, 2)
 
     st.image(color_img)
 
