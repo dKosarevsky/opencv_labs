@@ -6,7 +6,7 @@ from lab_03 import math_morph
 from lab_04 import edges
 from lab_05 import contour_analysis
 from lab_06 import key_points
-# from lab_07 import _______
+from lab_07 import sift
 
 # st.set_page_config(initial_sidebar_state="collapsed")
 st.sidebar.image('logo.png', width=300)
@@ -35,9 +35,8 @@ def main():
             "4. Границы изображения.",
             "5. Контурный анализ.",
             "6. Характерные точки.",
-            # "7. ______.",
-        ), index=4
-        # ), index=6
+            "7. SIFT.",
+        ), index=6
     )[:1]
 
     if lab == "1":
@@ -58,8 +57,8 @@ def main():
     elif lab == "6":
         key_points.main()
 
-    # elif lab == "7":
-    #     _______.main()
+    elif lab == "7":
+        sift.main()
 
 
 if __name__ == "__main__":
