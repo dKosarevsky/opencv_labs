@@ -43,6 +43,12 @@ def show_key_points(img, key_points, img_name):
     st.write("---")
 
 
+def show_matches(img_1, kp_1, img_2, kp_2, matches, matches_cnt):
+    flag = cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS
+    img_result = cv2.drawMatches(img_1, kp_1, img_2, kp_2, matches[:matches_cnt], None, flags=flag)
+    st.image(img_result)
+
+
 def match_key_points(rgb_1, gray_1, rgb_2, gray_2):
     rgb_1 = np.asarray(rgb_1.copy())
     rgb_2 = np.asarray(rgb_2.copy())
@@ -63,13 +69,8 @@ def match_key_points(rgb_1, gray_1, rgb_2, gray_2):
 
     good_matches = np.array([m1 for m1, m2 in matches if m1.distance < 0.75 * m2.distance])
 
-    flag = cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS
-    img_result = cv2.drawMatches(rgb_1, kp_1, rgb_2, kp_2, good_matches[:good_matches_cnt], None, flags=flag)
-    st.image(img_result)
-
-    flag = cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS
-    img_result_gray = cv2.drawMatches(gray_1, kp_1, gray_2, kp_2, good_matches[:good_matches_cnt], None, flags=flag)
-    st.image(img_result_gray)
+    show_matches(rgb_1, kp_1, rgb_2, kp_2, good_matches, good_matches_cnt)
+    show_matches(gray_1, kp_1, gray_2, kp_2, good_matches, good_matches_cnt)
 
 
 def main():
