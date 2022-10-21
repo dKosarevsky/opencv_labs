@@ -40,7 +40,7 @@ def get_image(user_img, user_url):
             st.stop()
 
     arr = np.uint8(img)
-    gray = cv2.cvtColor(arr, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(arr, cv2.COLOR_BGR2GRAY) if len(arr.shape) > 2 else arr
 
     c1, c2 = st.columns(2)
     with c1:
