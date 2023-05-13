@@ -9,7 +9,7 @@ opencv-python-headless==4.5.5.64  # https://github.com/opencv/opencv-python
 
 # plots
 plotly==5.8.0  # https://plotly.com/python/
-matplotlib==3.5.2  # https://matplotlib.org/
+matplotlib==3.7.1  # https://matplotlib.org/
 
 # math
 scipy==1.8.1  # https://scipy.github.io/devdocs/index.html
