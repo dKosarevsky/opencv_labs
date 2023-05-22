@@ -5,7 +5,7 @@ streamlit==1.22.0  # https://streamlit.io/
 watchdog==3.0.0  # https://github.com/gorakhargosh/watchdog
 
 # opencv
-opencv-python-headless==4.5.5.64  # https://github.com/opencv/opencv-python
+opencv-python-headless==4.7.0.72  # https://github.com/opencv/opencv-python
 
 # plots
 plotly==5.8.0  # https://plotly.com/python/
