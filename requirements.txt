@@ -8,7 +8,7 @@ watchdog==3.0.0  # https://github.com/gorakhargosh/watchdog
 opencv-python-headless==4.7.0.72  # https://github.com/opencv/opencv-python
 
 # plots
-plotly==5.8.0  # https://plotly.com/python/
+plotly==5.14.1  # https://plotly.com/python/
 matplotlib==3.7.1  # https://matplotlib.org/
 
 # math
